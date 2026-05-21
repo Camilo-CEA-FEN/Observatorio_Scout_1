@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revista Digital Observatorio Scout - Edición Especial</title>
+    <!-- Tailwind CSS para diseño moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons para iconografía limpia -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .classic-header {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Estilo Canva Grid */
+        .canva-grid {
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        }
+
+        /* Transiciones de páginas */
+        .page-transition {
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Scrollbars elegantes */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* Efecto de marco de revista */
+        .magazine-shadow {
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25), 
+                        0 18px 36px -18px rgba(0,0,0,0.3), 
+                        0 -12px 36px -8px rgba(0,0,0,0.03);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        scoutGreen: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        masonicGold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="overflow-x-hidden min-h-screen text-slate-800 transition-colors duration-300">
+
+    <!-- BARRA DE CONTROL PRINCIPAL (ESTILO CANVA EDITOR) -->
+    <header class="bg-slate-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-600 p-2 rounded-lg text-white">
+                <i data-lucide="compass" class="w-6 h-6 animate-spin-slow"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm md:text-base leading-tight">Canva Studio x Observatorio Scout</h1>
+                <p class="text-[10px] text-slate-400">Maquetador de Reportajes Históricos e Interactivos</p>
+            </div>
+        </div>
+
+        <!-- Ajustes de Diseño (Canva-like) -->
+        <div class="flex items-center flex-wrap gap-2 md:gap-4 text-xs">
+            <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-md border border-slate-700">
+                <span class="text-slate-400 font-medium">Tema Visual:</span>
+                <button onclick="setTheme('default')" class="w-4 h-4 rounded-full bg-emerald-800 ring-2 ring-offset-2 ring-offset-slate-900 ring-white cursor-pointer" title="Verde Scout Clásico"></button>
+                <button onclick="setTheme('dark')" class="w-4 h-4 rounded-full bg-slate-800 ring-1 ring-slate-600 cursor-pointer" title="Modo Nocturno / Editorial"></button>
+                <button onclick="setTheme('sepia')" class="w-4 h-4 rounded-full bg-amber-100 ring-1 ring-amber-300 cursor-pointer" title="Papel Envejecido / Histórico"></button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button onclick="toggleGrid()" id="btnGrid" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md border border-slate-700 transition">
+                    <i data-lucide="grid" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span class="hidden sm:inline">Guías Canva</span>
+                </button>
+                
+                <button onclick="toggleEditable()" id="btnEdit" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md border border-slate-700 transition">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span id="textEdit">Editar Textos</span>
+                </button>
+
+                <button onclick="window.print()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-md text-white font-semibold transition shadow-sm">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Exportar PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA DE TRABAJO DEL MAQUETADOR -->
+    <main class="max-w-[1400px] mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- SIDEBAR: NAVEGACIÓN DE PÁGINAS Y CONTROLES -->
+        <aside class="w-full lg:w-80 flex-shrink-0 flex flex-col gap-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                <h2 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-3">Índice del Reportaje</h2>
+                <div class="flex flex-col gap-1.5" id="pageIndexList">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+
+            <!-- Caja de Tips de Diseño para el Usuario -->
+            <div class="bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-2xl p-4 border border-indigo-100 shadow-sm">
+                <div class="flex gap-2.5 items-start">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h3 class="font-bold text-xs text-indigo-950 uppercase tracking-wider">Modo de Diseño Activo</h3>
+                        <p class="text-xs text-slate-600 mt-1">Puedes interactuar con los elementos gráficos de las páginas, ver las transiciones del método educativo, o activar las <strong>Guías de Canva</strong> para revisar alineaciones tipográficas perfectas.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTENEDOR DE LA REVISTA (VISTA DE DOBLE PÁGINA) -->
+        <section class="flex-grow flex flex-col items-center">
+            
+            <!-- Revista Estilo Pliego / Libro -->
+            <div id="magazineContainer" class="w-full max-w-[950px] bg-white magazine-shadow rounded-2xl overflow-hidden min-h-[680px] flex flex-col justify-between relative transition-all duration-300">
+                
+                <!-- Líneas de Canva / Grid (Opcional) -->
+                <div id="canvaGridLayer" class="absolute inset-0 canva-grid pointer-events-none hidden z-10"></div>
+                
+                <!-- Encabezado Editorial Fijo de la Revista -->
+                <div class="border-b border-slate-100 px-6 py-3 flex items-center justify-between text-xs text-slate-400 z-20 bg-opacity-95 backdrop-blur-sm" id="magHeader">
+                    <div class="flex items-center gap-2">
+                        <span class="classic-header tracking-widest font-bold text-emerald-800" id="headerLabel">OBSERVATORIO SCOUT</span>
+                        <span class="text-slate-300">|</span>
+                        <span>Edición Especial Investigación</span>
+                    </div>
+                    <div class="font-mono text-[10px]" id="pageIndicatorTop">PÁG. 1 / 8</div>
+                </div>
+
+                <!-- CONTENIDO DINÁMICO DE PÁGINAS -->
+                <div class="flex-grow p-6 md:p-10 flex items-center justify-center z-20 overflow-y-auto" id="magazinePageBody">
+                    <!-- El contenido de la página se inyecta aquí dinámicamente -->
+                </div>
+
+                <!-- Pie de Página de la Revista -->
+                <div class="border-t border-slate-100 px-6 py-3 flex items-center justify-between text-xs text-slate-400 z-20" id="magFooter">
+                    <span>© 2026 Asociación de Guías y Scouts de Chile - Archivo Museo Histórico</span>
+                    <div class="flex items-center gap-1 font-bold text-emerald-700" id="pageIndicatorBottom">
+                        Pág. 1
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CONTROLES DE NAVEGACIÓN -->
+            <div class="flex items-center justify-between w-full max-w-[950px] mt-6 gap-4">
+                <button onclick="prevPage()" class="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold transition shadow-sm hover:translate-x-[-2px] duration-150">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Pág. Anterior</span>
+                </button>
+                
+                <!-- Indicador de Puntos Rápidos -->
+                <div class="hidden sm:flex items-center gap-1.5" id="pageDotsContainer">
+                    <!-- Dinámico -->
+                </div>
+
+                <button onclick="nextPage()" class="flex items-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition shadow-sm hover:translate-x-[2px] duration-150">
+                    <span>Siguiente Pág.</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODAL DE PERSONALIZACIÓN Y TOASTS -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toastText">¡Bienvenido al Maquetador de Revista!</span>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DE CONTENIDOS DEL REPORTAJE ---
+        const PAGES = [
+            {
+                title: "Portada Especial",
+                type: "cover",
+                theme: "scout-cover",
+                content: `
+                    <div class="text-center max-w-xl mx-auto flex flex-col justify-between py-6 min-h-[480px]">
+                        <div class="space-y-2">
+                            <span class="classic-header text-emerald-800 text-xs tracking-[0.3em] font-extrabold uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Volumen de Investigación Cívica</span>
+                            <h1 class="serif-title text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-none mt-4">
+                                OBSERVATORIO <span class="text-emerald-800 block mt-2">SCOUT</span>
+                            </h1>
+                            <div class="h-1.5 w-24 bg-gradient-to-r from-emerald-600 to-amber-500 mx-auto rounded-full my-4"></div>
+                            <p class="text-sm text-slate-500 max-w-md mx-auto">Explorando las raíces históricas, la influencia cívica, los lazos masónicos y el futuro pedagógico del Escultismo en Chile ante la Revolución Digital.</p>
+                        </div>
+
+                        <!-- Ilustración Central Premium (Flor de Lis y Rosa de los Vientos SVG) -->
+                        <div class="my-8 flex justify-center">
+                            <div class="relative w-44 h-44 flex items-center justify-center bg-emerald-50 rounded-full border border-emerald-100 shadow-inner">
+                                <svg class="w-28 h-28 text-emerald-800" viewBox="0 0 100 100" fill="currentColor">
+                                    <path d="M50,10 C50,10 58,25 58,35 C58,45 50,48 50,48 C50,48 42,45 42,35 C42,25 50,10 50,10 Z M50,55 C42,55 35,42 35,42 C35,42 45,45 50,42 C55,45 65,42 65,42 C65,42 58,55 50,55 Z M50,46 C50,46 54,49 54,53 C54,58 46,58 46,53 C46,49 50,46 50,46 Z M50,5 C25,5 5,25 5,50 C5,75 25,95 50,95 C75,95 95,75 95,50 C95,25 75,5 50,5 Z M50,90 C28,90 10,72 10,50 C10,28 28,10 50,10 C72,10 90,28 90,50 C90,72 72,90 50,90 Z" />
+                                </svg>
+                                <!-- Círculo de brújula animado -->
+                                <div class="absolute inset-0 border-2 border-dashed border-emerald-200 rounded-full animate-spin-slow"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <p class="text-xs font-semibold text-amber-600 uppercase tracking-widest">Edición Especial: "Aprender Haciendo"</p>
+                            <p class="text-[10px] text-slate-400">Santiago de Chile, Mayo de 2026</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "1. El Origen Mundial",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-emerald-700 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">Baden-Powell y la Génesis</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight" contenteditable="true" id="editable-title-2">
+                                De Mafeking al Campamento de Brownsea
+                            </h2>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                El movimiento scout es fruto del genio pedagógico de <strong>Sir Robert Baden-Powell</strong>. Su gran epifanía ocurrió en el <strong>Sitio de Mafeking (1899)</strong> durante la guerra anglo-bóer, al observar el valor del Cuerpo de Cadetes local. 
+                            </p>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                En <strong>1907</strong>, en la <strong>Isla de Brownsea</strong>, Baden-Powell reunió a 20 muchachos de todas las clases sociales bajo el "Sistema de Patrullas". Este hito consagró el nacimiento de una de las mayores fuerzas voluntarias del planeta.
+                            </p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-inner">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">Cronología Inicial del Escultismo</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="bg-emerald-800 text-white font-mono text-[10px] px-2 py-0.5 rounded">1899</span>
+                                    <div class="text-[11px] text-slate-600"><strong>Asedio de Mafeking:</strong> Los jóvenes actúan como mensajeros clave de manera voluntaria.</div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="bg-emerald-800 text-white font-mono text-[10px] px-2 py-0.5 rounded">1907</span>
+                                    <div class="text-[11px] text-slate-600"><strong>Isla de Brownsea:</strong> Primer campamento scout de la historia (Dorset, Inglaterra).</div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="bg-emerald-800 text-white font-mono text-[10px] px-2 py-0.5 rounded">1908</span>
+                                    <div class="text-[11px] text-slate-600"><strong>Escultismo para Muchachos:</strong> Lanzamiento del libro de B-P que revoluciona el ocio activo.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "2. La Semilla en Chile",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="bg-gradient-to-tr from-emerald-800 to-emerald-950 text-white rounded-2xl p-6 shadow-md space-y-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
+                                <span class="font-bold text-[10px] tracking-wider uppercase text-emerald-300">Pioneros en América</span>
+                            </div>
+                            <h3 class="serif-title text-2xl font-bold">Chile: El Primer Rincón del Continente</h3>
+                            <p class="text-xs text-emerald-100 leading-relaxed">
+                                En marzo de 1909, Baden-Powell visitó Chile, encendiendo el entusiasmo en el médico y académico <strong>Dr. Alcibíades Vicencio</strong>. El <strong>21 de mayo de 1909</strong>, se consolidó en el Salón de Honor de la Universidad de Chile la Asociación Nacional, convirtiendo a nuestra patria en el primer país de América en adoptar el método.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-emerald-700 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">Marco Institucional</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight" contenteditable="true">
+                                Consolidación Jurídica y República
+                            </h2>
+                            <div class="space-y-3.5 text-xs text-slate-600">
+                                <div class="p-3 border-l-4 border-amber-500 bg-amber-50/50 rounded-r-xl">
+                                    <strong>Decreto Supremo N°115 (1915):</strong> Otorgado bajo el gobierno del presidente Ramón Barros Luco, concediendo personería jurídica al escultismo.
+                                </div>
+                                <div class="p-3 border-l-4 border-emerald-700 bg-emerald-50/50 rounded-r-xl">
+                                    <strong>Decreto Ley N°520 (1925):</strong> El presidente Arturo Alessandri Palma consagra al escultismo chileno como Institución Nacional de amparo estatal.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "3. Masonería y Escultismo",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-amber-700 tracking-wider uppercase bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100">Fraternidad e Iniciación</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight" contenteditable="true">
+                                La Escuadra y la Flor de Lis
+                            </h2>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                La implantación del Escultismo en Chile contó con el sostén decidido de la <strong>Francmasonería</strong>. Ambas compartían la meta de formar individuos con valores éticos, pensamiento crítico y tolerancia religiosa en un entorno estrictamente laico.
+                            </p>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                En el <strong>Congreso Masónico Nacional de 1912</strong> se acordó un soporte estratégico directo de la Gran Logia, impulsando el resguardo del secularismo frente a las presiones clericales de principios de siglo.
+                            </p>
+                        </div>
+                        <div class="bg-amber-50/40 border border-amber-100 rounded-2xl p-5 space-y-4">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                                <i data-lucide="git-branch" class="w-4 h-4 text-amber-500"></i>
+                                Confluencia de Valores Clave
+                            </h3>
+                            <div class="space-y-3 text-xs text-slate-600">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                                    <span><strong>Secularismo Absoluto:</strong> Apertura sin importar fe, raza u origen.</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                                    <span><strong>Autoconstrucción Ética:</strong> Perfección de la piedra bruta o progresión personal.</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                                    <span><strong>Fraternidad Universal:</strong> Hermanar pueblos sin fronteras cívicas ni partidistas.</span>
+                                </div>
+                            </div>
+                            <!-- Icono SVG Combinado Masonería-Escultismo -->
+                            <div class="flex justify-center pt-2">
+                                <svg class="w-16 h-16 text-amber-600" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                                    <!-- Escuadra y Compás simplificado -->
+                                    <path d="M50,15 L15,80 M50,15 L85,80 M30,60 L70,60" />
+                                    <!-- Flor de Lis sutil central -->
+                                    <path d="M50,30 C50,30 60,45 50,65 C40,45 50,30 50,30 Z" fill="currentColor" fill-opacity="0.1" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "4. Educación y Extensión",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 space-y-4 shadow-sm">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-indigo-800 flex items-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                Hitos del Escultismo de Extensión en Chile
+                            </h3>
+                            <div class="space-y-3 font-mono text-[11px] text-slate-600">
+                                <div class="border-b border-indigo-100 pb-2">
+                                    <span class="font-bold text-indigo-700">7 de Septiembre 1963:</span>
+                                    <p class="mt-1">Nace en el Centro de Rehabilitación del Norte (Escuela N°33 de Antofagasta), integrando a menores sordos y deficientes intelectuales.</p>
+                                </div>
+                                <div class="border-b border-indigo-100 pb-2">
+                                    <span class="font-bold text-indigo-700">1967:</span>
+                                    <p class="mt-1">El Prof. Enrique López Moreno viaja a EE.UU y Canadá para perfeccionar técnicas psicomotoras y adaptativas del movimiento.</p>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-indigo-700">1969:</span>
+                                    <p class="mt-1">Puesta en marcha del plan piloto en San Miguel (Santiago) y Primer Seminario del Cono Sur, consagrando a Chile como líder continental.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-indigo-700 tracking-wider uppercase bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">Educación Diferencial</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight" contenteditable="true">
+                                Escultismo de Extensión
+                            </h2>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                El movimiento scout no fue meramente recreativo: introdujo innovaciones metodológicas fundamentales a la escuela diferencial en Chile, denominadas <strong>Escultismo de Extensión</strong>.
+                            </p>
+                            <p class="text-xs text-slate-600 leading-relaxed" contenteditable="true">
+                                Esta metodología sustentada en el desarrollo social, la orientación tempo-espacial y la autodisciplina a través del juego sirvió para potenciar de forma inédita la habilitación psicomotora en jóvenes de contextos de vulnerabilidad extrema.
+                            </p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "5. Método y Progresión",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-emerald-700 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">Constructivismo Vivencial</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight">
+                                El Saber Mediante el Aprender Haciendo
+                            </h2>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                El Método Scout destaca frente a la evaluación tradicional punitiva o calificadora. A través de la <strong>progresión personal</strong>, las habilidades del joven se agrupan para ratificar su evolución en un ritmo plenamente autogestionado.
+                            </p>
+                            <!-- Rueda interactiva del Método (Selector) -->
+                            <div class="grid grid-cols-2 gap-2 pt-2" id="scoutWheel">
+                                <button onclick="selectMethodElement(0)" class="method-btn text-left p-2 border border-slate-200 rounded-lg text-xs hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                    🏕️ <strong>Naturaleza</strong>
+                                </button>
+                                <button onclick="selectMethodElement(1)" class="method-btn text-left p-2 border border-slate-200 rounded-lg text-xs hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                    🤝 <strong>Sist. de Equipos</strong>
+                                </button>
+                                <button onclick="selectMethodElement(2)" class="method-btn text-left p-2 border border-slate-200 rounded-lg text-xs hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                    🕯️ <strong>Ley y Promesa</strong>
+                                </button>
+                                <button onclick="selectMethodElement(3)" class="method-btn text-left p-2 border border-slate-200 rounded-lg text-xs hover:bg-emerald-50 hover:border-emerald-200 transition">
+                                    🛠️ <strong>Acción Directa</strong>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm flex flex-col justify-between min-h-[280px]">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">Detalle del Elemento Pedagógico</h3>
+                            <div id="methodDetailBox" class="text-xs text-slate-600 bg-white p-4 rounded-xl border border-slate-100 min-h-[140px] flex items-center justify-center italic">
+                                Selecciona un elemento de la izquierda para ver su fundamentación en el Método Scout.
+                            </div>
+                            <div class="text-[10px] text-slate-400 text-center">
+                                Método Scout: Sistema Dinámico Cohesivo
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "6. Escultismo vs IA",
+                type: "article",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-4xl">
+                        <div class="bg-gradient-to-tr from-slate-900 to-slate-950 text-white rounded-2xl p-6 shadow-md space-y-4">
+                            <div class="flex items-center gap-2 text-indigo-400">
+                                <i data-lucide="cpu" class="w-5 h-5"></i>
+                                <span class="font-bold text-[10px] tracking-wider uppercase">Frontera Tecnológica</span>
+                            </div>
+                            <h3 class="serif-title text-2xl font-bold">La IA como Medio, no como un Fin</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                En la era de la Inteligencia Artificial, los jóvenes se enfrentan a un déficit de experiencias sensoriales reales. La simulación algorítmica corre el riesgo de atrofiar la sensibilidad táctil, comunitaria e intuitiva. El escultismo actúa como la <strong>gramática de la realidad</strong> frente a la abstracción.
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <span class="text-xs font-bold text-indigo-700 tracking-wider uppercase bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100">Salud del Desarrollo Humano</span>
+                            <h2 class="serif-title text-3xl font-black text-slate-900 leading-tight">
+                                La Urgencia de lo Tangible
+                            </h2>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                No se trata de rechazar la tecnología, sino de consolidar un anclaje ético y corpóreo. Ningún algoritmo podrá replicar las vivencias táctiles de armar una carpa, oler la lluvia otoñal en el bosque, ni resolver conflictos cara a cara en una patrulla bajo el frío cordillerano.
+                            </p>
+                            <!-- Interactive Sensory hotspots -->
+                            <div class="flex gap-2 text-xs">
+                                <button onclick="triggerSensory('fuego')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-amber-100 transition">🔥 Fuego</button>
+                                <button onclick="triggerSensory('viento')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-sky-100 transition">💨 Viento</button>
+                                <button onclick="triggerSensory('noche')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-indigo-100 transition">🌌 Estrellas</button>
+                            </div>
+                            <div id="sensoryOutput" class="text-xs text-slate-500 italic mt-2 min-h-[40px] flex items-center">
+                                *Presiona un elemento sensible para contrastar la simulación digital.*
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "7. Conclusión",
+                type: "article",
+                content: `
+                    <div class="text-center max-w-2xl mx-auto py-8 space-y-6">
+                        <div class="flex justify-center">
+                            <span class="p-3 bg-emerald-50 rounded-full border border-emerald-100 text-emerald-800">
+                                <i data-lucide="compass" class="w-8 h-8 animate-pulse"></i>
+                            </span>
+                        </div>
+                        <h2 class="serif-title text-4xl font-black text-slate-900">
+                            Explorar el mundo real para seguir siendo humanos
+                        </h2>
+                        <div class="h-1 w-20 bg-emerald-600 mx-auto rounded-full"></div>
+                        <p class="text-sm text-slate-600 leading-relaxed max-w-xl mx-auto" contenteditable="true">
+                            La revista <strong>Observatorio Scout</strong> levanta su voz para recordar que el verdadero desarrollo humano requiere un balance crítico. El "Aprender Haciendo" es el antídoto contra la alienación digital. Al resguardar los espacios reales de interacción natural, conservamos la llama de una inteligencia profundamente empática y verdaderamente humana.
+                        </p>
+                        <div class="pt-4 flex justify-center gap-4 text-xs font-semibold text-slate-400">
+                            <span>SANTIAGO DE CHILE</span>
+                            <span>•</span>
+                            <span>EDICIÓN 2026</span>
+                            <span>•</span>
+                            <span>FIN DE SECCIÓN</span>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // --- SISTEMA DE ESTADO ---
+        let currentPageIndex = 0;
+        let isEditable = false;
+        let showGrid = false;
+
+        // --- MANEJO DE TEMAS DE COLOR ---
+        function setTheme(theme) {
+            const mag = document.getElementById('magazineContainer');
+            const topHeader = document.getElementById('magHeader');
+            const bottomFooter = document.getElementById('magFooter');
+            
+            // Limpiar clases
+            mag.className = "w-full max-w-[950px] magazine-shadow rounded-2xl overflow-hidden min-h-[680px] flex flex-col justify-between relative transition-all duration-300 ";
+            
+            if (theme === 'dark') {
+                mag.classList.add('bg-slate-900', 'text-white', 'border', 'border-slate-800');
+                showToast("Tema de Color: Nocturno Editorial");
+            } else if (theme === 'sepia') {
+                mag.classList.add('bg-amber-50/70', 'text-amber-950', 'border', 'border-amber-100');
+                showToast("Tema de Color: Histórico / Sepia");
+            } else {
+                mag.classList.add('bg-white', 'text-slate-800', 'border', 'border-slate-100');
+                showToast("Tema de Color: Verde Scout Clásico");
+            }
+        }
+
+        // --- COMPORTAMIENTOS INTERACTIVOS EN PÁGINAS ---
+        function selectMethodElement(index) {
+            const textEl = document.getElementById('methodDetailBox');
+            const methods = [
+                "<strong>Contacto con la naturaleza:</strong> El espacio ideal para el aprendizaje scout. Despierta el asombro frente a la biodiversidad y fomenta la conservación activa de los ecosistemas.",
+                "<strong>Sistema de Equipos (Patrullas):</strong> Organismo social que promueve la autogestión, el compañerismo sincero, la distribución equitativa de responsabilidades y el liderazgo colaborativo.",
+                "<strong>Marco de Valores (Ley y Promesa):</strong> Un compromiso ético aceptado libre y conscientemente por el educando para guiar su conducta diaria, erradicando el miedo al castigo escolar.",
+                "<strong>Acción Directa (Aprender Haciendo):</strong> La experimentación como motor constructivista del conocimiento. Los jóvenes se convierten en artífices y protagonistas directos de sus logros."
+            ];
+            textEl.innerHTML = methods[index];
+            showToast("Detalle de Método Cargado");
+        }
+
+        function triggerSensory(type) {
+            const out = document.getElementById('sensoryOutput');
+            const outcomes = {
+                fuego: "🔥 <strong>La Fogata Real:</strong> El chisporroteo, el humo penetrante y el calor irradiado despiertan conexiones sinápticas primarias insustituibles para la supervivencia y cohesión grupal.",
+                viento: "💨 <strong>El Viento Cordillerano:</strong> El frío táctil sobre la cara, la necesidad de ajustar las cuerdas de la carpa y el esfuerzo compartido bajo el viento generan resiliencia.",
+                noche: "🌌 <strong>La Noche Estrellada:</strong> Buscar las constelaciones con los ojos fijos en la inmensidad del cielo despierta una profunda reverencia cósmica que ningún planetario VR imita."
+            };
+            out.innerHTML = outcomes[type];
+        }
+
+        // --- CONTROLADORES DE PÁGINA ---
+        function renderPage() {
+            const container = document.getElementById('magazinePageBody');
+            const page = PAGES[currentPageIndex];
+            
+            // Inyectar HTML de contenido
+            container.innerHTML = page.content;
+
+            // Actualizar numeración
+            document.getElementById('pageIndicatorTop').innerText = `PÁG. ${currentPageIndex + 1} / ${PAGES.length}`;
+            document.getElementById('pageIndicatorBottom').innerHTML = `
+                <span class="mr-2 text-slate-400 font-normal">Observatorio Scout</span> Pág. ${currentPageIndex + 1}
+            `;
+
+            // Refrescar iconografía de Lucide
+            lucide.createIcons();
+
+            // Re-renderizar índice
+            renderIndex();
+            renderDots();
+
+            // Asegurar modo editable si está activo
+            applyEditableState();
+        }
+
+        function prevPage() {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                renderPage();
+            } else {
+                showToast("Ya estás en la Portada de la revista");
+            }
+        }
+
+        function nextPage() {
+            if (currentPageIndex < PAGES.length - 1) {
+                currentPageIndex++;
+                renderPage();
+            } else {
+                showToast("Has llegado al final del Reportaje Especial");
+            }
+        }
+
+        function jumpToPage(index) {
+            currentPageIndex = index;
+            renderPage();
+        }
+
+        // --- RENDERIZAR ÍNDICE DE PÁGINAS Y CONTROLES DOCK ---
+        function renderIndex() {
+            const indexList = document.getElementById('pageIndexList');
+            indexList.innerHTML = PAGES.map((p, index) => `
+                <button onclick="jumpToPage(${index})" class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-xl text-left transition duration-200 ${
+                    index === currentPageIndex 
+                    ? 'bg-emerald-800 text-white shadow-sm' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100'
+                }">
+                    <span class="truncate">${p.title}</span>
+                    <span class="font-mono text-[10px] opacity-75">Pág. ${index + 1}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderDots() {
+            const dotsContainer = document.getElementById('pageDotsContainer');
+            dotsContainer.innerHTML = PAGES.map((_, index) => `
+                <button onclick="jumpToPage(${index})" class="w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentPageIndex ? 'bg-emerald-800 w-6' : 'bg-slate-200 hover:bg-slate-300'
+                }" title="Ir a Página ${index + 1}"></button>
+            `).join('');
+        }
+
+        // --- SISTEMA EDITABLE (CANVA TEXT EDITOR) ---
+        function toggleEditable() {
+            isEditable = !isEditable;
+            const btn = document.getElementById('btnEdit');
+            const txt = document.getElementById('textEdit');
+            
+            if (isEditable) {
+                btn.classList.add('bg-amber-600', 'text-white', 'border-amber-500');
+                btn.classList.remove('bg-slate-800', 'border-slate-700');
+                txt.innerText = "Bloquear Textos";
+                showToast("Modo Edición Activado: Haz clic sobre el texto para redactar");
+            } else {
+                btn.classList.remove('bg-amber-600', 'text-white', 'border-amber-500');
+                btn.classList.add('bg-slate-800', 'border-slate-700');
+                txt.innerText = "Editar Textos";
+                showToast("Textos Bloqueados y Salvados");
+            }
+            applyEditableState();
+        }
+
+        function applyEditableState() {
+            const textBlocks = document.querySelectorAll('[contenteditable]');
+            textBlocks.forEach(block => {
+                block.setAttribute('contenteditable', isEditable.toString());
+                if (isEditable) {
+                    block.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2', 'rounded-lg', 'bg-amber-50/30', 'p-1');
+                } else {
+                    block.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2', 'rounded-lg', 'bg-amber-50/30', 'p-1');
+                }
+            });
+        }
+
+        // --- MOSTRAR U OCULTAR CUADRÍCULA DE TRABAJO (CANVA GUIDELINES) ---
+        function toggleGrid() {
+            showGrid = !showGrid;
+            const grid = document.getElementById('canvaGridLayer');
+            const btn = document.getElementById('btnGrid');
+
+            if (showGrid) {
+                grid.classList.remove('hidden');
+                btn.classList.add('bg-indigo-600', 'text-white');
+                showToast("Líneas de Diseño de Canva activas");
+            } else {
+                grid.classList.add('hidden');
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                showToast("Líneas ocultadas");
+            }
+        }
+
+        // --- NOTIFICACIONES / TOASTS ---
+        function showToast(text) {
+            const toast = document.getElementById('toastNotification');
+            const toastText = document.getElementById('toastText');
+            toastText.innerText = text;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // --- TECLAS DE NAVEGACIÓN ---
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextPage();
+            } else if (e.key === 'ArrowLeft') {
+                prevPage();
+            }
+        });
+
+        // --- INICIAR ---
+        window.onload = function() {
+            renderPage();
+            showToast("Maquetador listo. Usa las flechas de dirección para avanzar.");
+        };
+    </script>
+</body>
+</html>
